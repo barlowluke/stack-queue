@@ -92,29 +92,33 @@ bool stack_contains_restore(std::stack<T>& S, std::queue<T>& Q, const T& x) {
     if (!Q.empty()) {
         throw std::invalid_argument("Q must be initially empty.");
     }
-    bool exists = false;
-    // step 1
+    bool found = false;
+    // step 1: transfer to queue and scan
     while (!S.empty()) {
-        if (S.top() == x) {
-            exists = true;
+        T e = S.top();
+        S.pop();
+        Q.push(e);
+        if (e == x) {
+            found = true;
         }
-        Q.push(S.top());
-        S.pop();
     }
-    // step 2
+    // step 2: restore to stack in reverse order
     while (!Q.empty()) {
-        S.push(Q.back());
+        T e = Q.front();
         Q.pop();
+        S.push(e);
     }
-    // step 3
+    // step 3: restore to queue in original order
     while (!S.empty()) {
-        Q.push(S.top());
+        T e = S.top();
         S.pop();
+        Q.push(e);
     }
     // step 4
     while (!Q.empty()) {
-        S.push(Q.back());
+        T e = Q.front();
         Q.pop();
+        S.push(e);
     }
-    return exists;
+    return found;
 }
